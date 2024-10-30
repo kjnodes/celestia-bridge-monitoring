@@ -1,7 +1,6 @@
 volumes:
   prometheus_data: {}
   grafana_data: {}
-  alerta_db: {}
 
 networks:
   celestia-monitoring:
