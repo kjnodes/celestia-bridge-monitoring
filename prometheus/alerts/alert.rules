@@ -1,49 +1,20 @@
 groups:
-  - name: Node Monitoring
+  - name: celestia-node
     rules:
-
-    - alert: NotInSync
-      expr: cometbft_blocksync_syncing != 0
+    - alert: celestia_node_service_not_running
+      expr: node_systemd_unit_state{name=~"celestia-(bridge|light|full).*", state="active"} == 0
       for: 1m
       labels:
-        severity: minor
+        severity: warning
       annotations:
-        description: 'Node is not in sync.'
+        summary: "Celestia Node service is not running (instance {{ $labels.instance }})"
+        description: "Celestia Node service is not running\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-    - alert: CometTooFewPeers
-      expr: cometbft_p2p_peers < 2
-      for: 5m
-      labels:
-        severity: major
-      annotations:
-        description: 'The number of connected P2P peers has been below the defined threshold in the last 5 minutes.'
-
-    - alert: GethTooFewPeers
-      expr: p2p_peers < 2
-      for: 5m
-      labels:
-        severity: major
-      annotations:
-        description: 'The number of connected P2P peers has been below the defined threshold in the last 5 minutes.'
-
-    - alert: CometStalledBlocks
-      expr: increase(cometbft_consensus_latest_block_height[5m]) == 0
-      labels:
-        severity: critical
-      annotations:
-        description: 'Block production stalled. The node has not produced any blocks in the last 5 minutes.'
-
-    - alert: GethStalledBlocks
-      expr: increase(chain_head_block[5m]) == 0
-      labels:
-        severity: critical
-      annotations:
-        description: 'Block production stalled. The node has not produced any blocks in the last 5 minutes.'
-
-    - alert: InstanceDown
-      expr: up == 0
+    - alert: celestia_node_stop_syncing
+      expr: delta(celestia_total_synced_headers[5m]) == 0 or delta(celestia_hdr_store_head_height_gauge[5m]) == 0
       for: 1m
       labels:
-        severity: critical
+        severity: warning
       annotations:
-        description: "Instance has been down for more than 1 minute."
+        summary: "celestia node {{ $labels.instance }} is stuck"
+        description: "celestia node {{ $labels.instance }} is stuck"

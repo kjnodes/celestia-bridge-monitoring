@@ -2,6 +2,7 @@ global:
   scrape_interval: 15s
   scrape_timeout: 10s
   evaluation_interval: 15s
+
 alerting:
   alertmanagers:
     - follow_redirects: true
@@ -11,18 +12,22 @@ alerting:
       static_configs:
         - targets:
             - alertmanager:9093
+
 rule_files:
   - /etc/prometheus/alerts/alert.rules
+
 scrape_configs:
+  # Prometheus metrics
   - job_name: prometheus
-    metrics_path: /metrics
     static_configs:
       - targets:
           - localhost:9090
-  - job_name: cometbft
-    metrics_path: /metrics
+  # Otel Collector metrics
+  - job_name: otel-collector
+    static_configs:
+      - targets: ['otel-collector:8888']
+  # Celestia DA node metrics
+  - job_name: celestia-da-node-metrics
     static_configs:
       - targets:
-          - YOUR_NODE_IP:COMET_PORT  # for example 192.168.0.1:26660
-        labels:
-          instance: story
+          - 'otel-collector:8889'
