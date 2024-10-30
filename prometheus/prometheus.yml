@@ -26,10 +26,3 @@ scrape_configs:
           - YOUR_NODE_IP:COMET_PORT  # for example 192.168.0.1:26660
         labels:
           instance: story
-  - job_name: geth
-    metrics_path: /debug/metrics/prometheus
-    static_configs:
-      - targets:
-          - YOUR_NODE_IP:GETH_PORT  # for example 192.168.0.1:6060
-        labels:
-          instance: story

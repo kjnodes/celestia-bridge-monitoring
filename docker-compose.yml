@@ -4,7 +4,7 @@ volumes:
   alerta_db: {}
 
 networks:
-  story-monitoring:
+  celestia-monitoring:
 
 services:
   prometheus:
@@ -25,7 +25,7 @@ services:
     ports:
       - 9090:9090
     networks:
-      - story-monitoring
+      - celestia-monitoring
     restart: always
 
   # default login credentials: admin/admin
@@ -39,14 +39,14 @@ services:
     ports:
       - 9999:3000
     networks:
-      - story-monitoring
+      - celestia-monitoring
     restart: always
 
   alerta_db:
     image: postgres:11
     container_name: alerta_db
     networks:
-     - story-monitoring
+     - celestia-monitoring
     volumes:
       - type: volume
         source: alerta_db
@@ -62,7 +62,7 @@ services:
     image: alerta/alerta-web:latest
     container_name: alerta
     networks:
-     - story-monitoring
+     - celestia-monitoring
     ports:
        - 8083:8083
     depends_on:
@@ -82,7 +82,7 @@ services:
     image: prom/alertmanager:latest
     container_name: alertmanager
     networks:
-      - story-monitoring
+      - celestia-monitoring
     ports:
       - 9093:9093
     volumes:
@@ -95,4 +95,20 @@ services:
       '--log.level=debug',
     ]
     hostname: 'alertmanager'
+    restart: always
+
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    container_name: otel-collector
+    networks:
+      - celestia-monitoring
+    ports:
+      - "4317:4317"    # OTLP gRPC receiver
+      - "4318:4318"    # OTLP HTTP receiver
+      - "8888:8888"    # Prometheus metrics exporter
+    volumes:
+      - ./otel/otel-config.yaml:/otel-config.yaml
+    command:
+      - '--config=/otel-config.yaml'
+    hostname: 'otel-collector'
     restart: always
