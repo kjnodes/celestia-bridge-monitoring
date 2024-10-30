@@ -13,8 +13,6 @@ receivers:
 exporters:
   otlphttp:
     endpoint: https://otel.celestia.observer
-  otlphttp/counterpoint:
-    endpoint: https://otel.my.monitoring.endpoint
   prometheus:
     endpoint: "0.0.0.0:8889"
     namespace: celestia
@@ -35,4 +33,4 @@ service:
   pipelines:
     metrics:
       receivers: [otlp]
-      exporters: [otlphttp, otlphttp/counterpoint, prometheus]
+      exporters: [otlphttp, prometheus]
