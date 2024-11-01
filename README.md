@@ -56,7 +56,7 @@ Configure Alertmanager to send notifications via Telegram. Update the `YOUR_TELE
 Edit the configuration file:
 
 ```bash
-vim $HOME/celestia-bridge-monitoring/prometheus/alert_manager/alertmanager.yml
+vim $HOME/celestia-bridge-monitoring/prometheus/alertmanager/alertmanager.yml
 ```
 
 Example configuration:
