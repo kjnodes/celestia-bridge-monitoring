@@ -50,7 +50,7 @@ services:
       - 9093:9093
     volumes:
       - type: bind
-        source: ./prometheus/alertmanager
+        source: ./alertmanager
         target: /etc/alertmanager
         read_only: true
     command: [
