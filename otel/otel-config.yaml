@@ -1,7 +1,7 @@
 receivers:
   otlp:
     protocols:
-      grpc: 
+      grpc:
       http:
   prometheus:
     config:
@@ -12,9 +12,9 @@ receivers:
         - targets: ['127.0.0.1:8888']
 exporters:
   otlphttp:
-    endpoint: https://otel.celestia.observer
+    endpoint: 'OTEL_ENDPOINT'    # mainnet - https://otel.celestia.observer, testnet - https://otel.celestia-mocha.com
   prometheus:
-    endpoint: "0.0.0.0:8889"
+    endpoint: '0.0.0.0:8889'
     namespace: celestia
     send_timestamps: true
     metric_expiration: 180m

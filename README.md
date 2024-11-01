@@ -84,9 +84,9 @@ receivers:
         message: '{{ template "telegram.message" . }}'
 ```
 
-### 2. Configure Prometheus
+### 2. Configure Otel
 
-Set up Prometheus by specifying the `IP` address and `ports` for your node services. Modify the `YOUR_NODE_IP:COMET_PORT` and `YOUR_NODE_IP:GETH_PORT` in the configuration file:
+Update `OTEL_ENDPOINT` in the configuration file to point to either testnet or mainnet:
 
 ```bash
 vim $HOME/celestia-bridge-monitoring/prometheus/prometheus.yml
@@ -95,41 +95,43 @@ vim $HOME/celestia-bridge-monitoring/prometheus/prometheus.yml
 Example configuration:
 
 ```yml
-global:
-  scrape_interval: 15s
-  scrape_timeout: 10s
-  evaluation_interval: 15s
-alerting:
-  alertmanagers:
-    - follow_redirects: true
-      scheme: http
-      timeout: 10s
-      api_version: v2
-      static_configs:
-        - targets:
-            - alertmanager:9093
-rule_files:
-  - /etc/prometheus/alerts/alert.rules
-scrape_configs:
-  - job_name: prometheus
-    metrics_path: /metrics
-    static_configs:
-      - targets:
-          - localhost:9090
-  - job_name: cometbft
-    metrics_path: /metrics
-    static_configs:
-      - targets:
-          - 192.168.0.1:26660
-        labels:
-          instance: story
-  - job_name: geth
-    metrics_path: /debug/metrics/prometheus
-    static_configs:
-      - targets:
-          - 192.168.0.1:6060
-        labels:
-          instance: story
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+  prometheus:
+    config:
+      scrape_configs:
+      - job_name: 'otel-collector'
+        scrape_interval: 10s
+        static_configs:
+        - targets: ['127.0.0.1:8888']
+exporters:
+  otlphttp:
+    endpoint: 'https://otel.celestia-mocha.com`    # testnet
+  prometheus:
+    endpoint: '0.0.0.0:8889'
+    namespace: celestia
+    send_timestamps: true
+    metric_expiration: 180m
+    enable_open_metrics: true
+    resource_to_telemetry_conversion:
+      enabled: true
+processors:
+  batch:
+  memory_limiter:
+    # 80% of maximum memory up to 2G
+    limit_mib: 1500
+    # 25% of limit up to 2G
+    spike_limit_mib: 512
+    check_interval: 5s
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      exporters: [otlphttp, prometheus]
+
 ```
 
 ## Monitoring stack deployment
