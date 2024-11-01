@@ -25,7 +25,7 @@ services:
       - 9090:9090
     networks:
       - celestia-monitoring
-    restart: always
+    restart: unless-stopped
 
   # default login credentials: admin/admin
   grafana:
@@ -39,7 +39,7 @@ services:
       - 9999:3000
     networks:
       - celestia-monitoring
-    restart: always
+    restart: unless-stopped
 
   alertmanager:
     image: prom/alertmanager:latest
@@ -57,11 +57,10 @@ services:
       '--config.file=/etc/alertmanager/alertmanager.yml',
       '--log.level=debug',
     ]
-    hostname: 'alertmanager'
-    restart: always
+    restart: unless-stopped
 
   otel-collector:
-    image: otel/opentelemetry-collector:latest
+    image: otel/opentelemetry-collector:0.86.0
     container_name: otel-collector
     networks:
       - celestia-monitoring
@@ -74,5 +73,4 @@ services:
       - ./otel/otel-config.yaml:/otel-config.yaml
     command:
       - '--config=/otel-config.yaml'
-    hostname: 'otel-collector'
-    restart: always
+    restart: unless-stopped
