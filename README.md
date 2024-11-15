@@ -38,11 +38,12 @@ Clone the repository that contains the monitoring stack configuration:
 ```bash
 rm -rf $HOME/celestia-bridge-monitoring
 git clone https://github.com/kjnodes/celestia-bridge-monitoring.git $HOME/celestia-bridge-monitoring
+cd $HOME/celestia-bridge-monitoring
 ```
 
 ## Pre-Configuration
 
-Before deploying the monitoring stack, configure Alerting and Prometheus settings.
+Before deploying the monitoring stack, configure Alerting and Otel settings.
 
 ### 1. Set Up Telegram Alerting
 
@@ -56,7 +57,7 @@ Configure Alertmanager to send notifications via Telegram. Update the `YOUR_TELE
 Edit the configuration file:
 
 ```bash
-vim $HOME/celestia-bridge-monitoring/alertmanager/alertmanager.yml
+vim alertmanager/alertmanager.yml
 ```
 
 Example configuration:
@@ -73,10 +74,10 @@ receivers:
 
 ### 2. Configure Otel
 
-Update `OTEL_ENDPOINT` in the configuration file to point to either testnet or mainnet:
+In order to send metrics to Celestia Foundation Otel Collector you have to update `OTEL_ENDPOINT` in the configuration file to point to either testnet or mainnet:
 
 ```bash
-vim $HOME/celestia-bridge-monitoring/otel/otel-config.yaml
+vim otel/otel-config.yaml
 ```
 
 Example configuration:
@@ -98,8 +99,17 @@ exporters:
 ## Monitoring stack deployment
 
 ```bash
-cd $HOME/celestia-bridge-monitoring
 docker compose up -d
+```
+
+## Configure Celestia bridge node
+
+In order to start sending metrics to Otel Collector you have to add `--metrics`, `--metrics.endpoint` and `--metrics.tls` flags to bridge node execution.
+
+Example configuration:
+
+```bash
+celestia bridge start --metrics --metrics.tls=false --metrics.endpoint=123.123.123.123:4318
 ```
 
 ## Data Visualization Using Grafana
