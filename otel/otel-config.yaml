@@ -19,9 +19,7 @@ exporters:
 processors:
   batch:
   memory_limiter:
-    # 80% of maximum memory up to 2G
-    limit_mib: 1500
-    # 25% of limit up to 2G
+    limit_mib: 1024
     spike_limit_mib: 512
     check_interval: 5s
 service:

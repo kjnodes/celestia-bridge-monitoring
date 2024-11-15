@@ -62,19 +62,6 @@ vim $HOME/celestia-bridge-monitoring/alertmanager/alertmanager.yml
 Example configuration:
 
 ```yml
-global:
-  resolve_timeout: 1m
-
-templates: 
-- 'templates/*.tmpl'
-
-route:
-  receiver: 'telegram'
-  group_by: []            # Empty list to avoid grouping alerts
-  group_wait: 0s          # Send notifications immediately
-  group_interval: 1s      # Set a minimal interval for ongoing alerts
-  repeat_interval: 4h     # Repeat notifications for ongoing alerts every 4 hours
-
 receivers:
   - name: 'telegram'
     telegram_configs:
@@ -95,13 +82,6 @@ vim $HOME/celestia-bridge-monitoring/otel/otel-config.yaml
 Example configuration:
 
 ```yml
-receivers:
-  otlp:
-    protocols:
-      grpc:
-        endpoint: '0.0.0.0:4317'
-      http:
-        endpoint: '0.0.0.0:4318'
 exporters:
   otlphttp:
     endpoint: 'https://otel.celestia.observer'
@@ -113,28 +93,6 @@ exporters:
     enable_open_metrics: true
     resource_to_telemetry_conversion:
       enabled: true
-processors:
-  batch:
-  memory_limiter:
-    # 80% of maximum memory up to 2G
-    limit_mib: 1500
-    # 25% of limit up to 2G
-    spike_limit_mib: 512
-    check_interval: 5s
-service:
-  pipelines:
-    metrics:
-      receivers: [otlp]
-      exporters: [otlphttp, prometheus]
-  telemetry:
-    metrics:
-      readers:
-        - pull:
-            exporter:
-              prometheus:
-                host: '0.0.0.0'
-                port: 8888
-
 ```
 
 ## Monitoring stack deployment
