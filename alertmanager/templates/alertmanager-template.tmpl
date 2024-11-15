@@ -1,0 +1,25 @@
+{{ define "telegram.message" }}
+  {{ if gt (len .Alerts.Firing) 0 }}
+  <b>🟧 {{ len .Alerts.Firing }} alert(s) firing:</b>
+    {{ range .Alerts.Firing }} {{ template "telegram_alert_firing" . }} {{ end }} {{ end }}
+  {{ if gt (len .Alerts.Resolved) 0 }}
+  <b>🟩 {{ len .Alerts.Resolved }} alert(s) resolved:</b>
+    {{ range .Alerts.Resolved }} {{ template "telegram_alert_resolved" . }} {{ end }} {{ end }}
+⚡️ Powered by kjnodes (<a href="https://kjnodes.com">Website</a>|<a href="https://services.kjnodes.com">Services</a>|<a href="https://x.com/kjnodes">Twitter</a>)
+{{ end }}
+
+{{ define "telegram_alert_firing" }}
+<b>{{ .Labels.alertname }}</b>
+<i>{{ .Annotations.description }}</i>
+
+<b>🏷  Labels:</b>
+| {{ range $key, $value := .Labels }}{{ if ne $key "alertname" }}{{ $key }}: <code>{{ $value }}</code> | {{ end }}{{ end }}
+{{ end }}
+
+{{ define "telegram_alert_resolved" }}
+<b>{{ .Labels.alertname }}</b>
+<i>{{ .Annotations.description }}</i>
+
+<b>🏷  Labels:</b>
+| {{ range $key, $value := .Labels }}{{ if ne $key "alertname" }}{{ $key }}: <code>{{ $value }}</code> | {{ end }}{{ end }}
+{{ end }}

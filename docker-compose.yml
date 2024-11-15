@@ -1,0 +1,76 @@
+volumes:
+  prometheus_data: {}
+  grafana_data: {}
+
+networks:
+  celestia-monitoring:
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: celestia-da-prometheus
+    volumes:
+       - type: volume
+         source: prometheus_data
+         target: /prometheus
+       - type: bind
+         source: ./prometheus
+         target: /etc/prometheus
+         read_only: true 
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-lifecycle'
+    ports:
+      - 9090:9090
+    networks:
+      - celestia-monitoring
+    restart: unless-stopped
+
+  # default login credentials: admin/admin
+  grafana:
+    image: grafana/grafana:latest
+    env_file: ./grafana/grafana.conf
+    container_name: celestia-da-grafana
+    volumes:
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    ports:
+      - 9999:3000
+    networks:
+      - celestia-monitoring
+    restart: unless-stopped
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: celestia-da-alertmanager
+    networks:
+      - celestia-monitoring
+    ports:
+      - 9093:9093
+    volumes:
+      - type: bind
+        source: ./alertmanager
+        target: /etc/alertmanager
+        read_only: true
+    command: [
+      '--config.file=/etc/alertmanager/alertmanager.yml',
+      '--log.level=debug',
+    ]
+    restart: unless-stopped
+
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    container_name: celestia-da-otel-collector
+    networks:
+      - celestia-monitoring
+    ports:
+      - 4317:4317
+      - 4318:4318
+      - 8888:8888
+      - 8889:8889
+    volumes:
+      - ./otel/otel-config.yaml:/otel-config.yaml
+    command:
+      - '--config=/otel-config.yaml'
+    restart: unless-stopped
