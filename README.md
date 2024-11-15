@@ -120,7 +120,7 @@ Follow these steps to access and use the Celestia Bridge Node Dashboard in Grafa
 
 2. Log in using the default credentials `admin/admin`, then set a new password.
 
-3. Navigate to the `Dashboards` page to access the `Celestia Bridge Node Dashboard`.
+3. Navigate to the `Dashboards` page to access the `Celestia Bridge Dashboard`.
 
 ## Dashboard contents
 
