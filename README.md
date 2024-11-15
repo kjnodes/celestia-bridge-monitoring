@@ -138,11 +138,11 @@ Displays peer connections.
 
 ![image](images/dashboard-network-metrics.png)
 
-### 3. Blockchain
+### 3. Performance
 
-Displays blockchain metrics, including block time, store put metrics, shrex responses and headers metrics.
+Displays performance metrics, including block time, store put metrics, shrex responses and headers metrics.
 
-![image](images/dashboard-blockchain-metrics.png)
+![image](images/dashboard-performance-metrics.png)
 
 ## Alerting and Notifications
 
