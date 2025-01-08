@@ -7,7 +7,7 @@ receivers:
         endpoint: '0.0.0.0:4318'
 exporters:
   otlphttp:
-    endpoint: 'OTEL_ENDPOINT' # mainnet https://otel.celestia.observer, testnet - https://otel.celestia-mocha.com
+    endpoint: 'OTEL_ENDPOINT' # mainnet https://otel.celestia.observer, testnet - https://otel.mocha.celestia.observer
   prometheus:
     endpoint: '0.0.0.0:8889'
     namespace: celestia

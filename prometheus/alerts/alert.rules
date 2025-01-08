@@ -27,6 +27,7 @@ groups:
 
     - alert: NoReceiverMetricPoints
       expr: increase(otelcol_receiver_accepted_metric_points[1m]) == 0
+      for: 3m
       labels:
         severity: critical
       annotations:
